@@ -1,0 +1,307 @@
+/*
+ * Estilo de tinta: negro sobre blanco, bordes de 1 px y nada que se anime,
+ * para que se lea igual en un teléfono al sol que en un lector electrónico,
+ * y para que la pantalla de tinta se refresque lo menos posible. No hay modo
+ * oscuro a propósito: es papel.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+:root {
+  color-scheme: light;
+  --tinta: #000;
+  --papel: #fff;
+}
+
+html {
+  background: var(--papel);
+  color: var(--tinta);
+}
+
+body {
+  margin: 0;
+  font: 20px/1.5 Georgia, 'Times New Roman', serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+main,
+.barra,
+.pie,
+.sin-js {
+  max-width: 34em;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 14px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--tinta);
+}
+
+.marca {
+  font-size: 1.1em;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+a {
+  color: var(--tinta);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+h1 {
+  font-size: 1.6em;
+  line-height: 1.2;
+  margin: 0.8em 0 0.3em;
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 2em 0 0.5em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--tinta);
+}
+
+p {
+  margin: 0.5em 0;
+}
+
+.meta {
+  font-size: 0.8em;
+  margin: 0.2em 0 0;
+}
+
+.estado {
+  margin: 1em 0;
+}
+
+/* --- Listas --- */
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lista > li {
+  border-bottom: 1px solid var(--tinta);
+  padding: 14px 0;
+}
+
+.lista a.titulo {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.tematicas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5em, 1fr));
+  border-top: 1px solid var(--tinta);
+  border-left: 1px solid var(--tinta);
+}
+
+.tematicas li {
+  border-right: 1px solid var(--tinta);
+  border-bottom: 1px solid var(--tinta);
+}
+
+.tematicas a {
+  display: block;
+  padding: 12px;
+  text-decoration: none;
+}
+
+.tematicas a span {
+  display: block;
+  font-size: 0.8em;
+}
+
+.paginas {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin: 1.5em 0;
+}
+
+.paginas > span {
+  font-size: 0.8em;
+}
+
+/* --- Formularios y botones --- */
+
+.buscar {
+  display: flex;
+  gap: 8px;
+  margin: 1em 0;
+}
+
+input,
+button {
+  font: inherit;
+  color: var(--tinta);
+  background: var(--papel);
+  border: 1px solid var(--tinta);
+  border-radius: 0;
+  padding: 6px 12px;
+  margin: 0;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+}
+
+button {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.principal {
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+button:disabled {
+  cursor: default;
+  border-style: dashed;
+}
+
+button.principal:disabled {
+  background: var(--papel);
+  color: var(--tinta);
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--tinta);
+  outline-offset: 2px;
+}
+
+/* --- Pieza --- */
+
+.portada {
+  display: block;
+  width: 100%;
+  max-width: 12em;
+  aspect-ratio: 1;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.1);
+  border: 1px solid var(--tinta);
+  margin: 1em 0;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px 20px;
+  margin: 1em 0;
+}
+
+.ficha {
+  border: 1px solid var(--tinta);
+  padding: 12px;
+  margin: 1.5em 0;
+}
+
+.ficha dt {
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ficha dd {
+  margin: 0 0 0.6em;
+}
+
+.ficha dd:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Reproductor: al pie, siempre a mano --- */
+
+.reproductor {
+  position: sticky;
+  bottom: 0;
+  background: var(--papel);
+  border-top: 2px solid var(--tinta);
+  padding: 10px 16px 14px;
+}
+
+.reproductor > * {
+  max-width: calc(34em - 32px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reproductor__titulo {
+  margin-top: 0;
+  font-size: 0.8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reproductor__titulo a {
+  font-weight: bold;
+}
+
+.reproductor audio {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.reproductor__botones {
+  display: flex;
+  gap: 8px;
+}
+
+.reproductor__botones button {
+  flex: 1;
+  font-size: 0.8em;
+  padding: 6px 4px;
+}
+
+/* --- Pie --- */
+
+.pie {
+  margin-top: 3em;
+  padding-top: 12px;
+  padding-bottom: 32px;
+  border-top: 2px solid var(--tinta);
+  font-size: 0.8em;
+}
+
+@media print {
+  .barra .buscar,
+  .reproductor,
+  .acciones button {
+    display: none;
+  }
+}

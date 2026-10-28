@@ -35,8 +35,9 @@ cualquier ruta llega a la app porque el deploy copia `index.html` a `404.html`.
 
 Negro sobre blanco, bordes de 1 px, nada que se anime y páginas numeradas en
 vez de scroll infinito. El reproductor queda al pie mientras se navega,
-recuerda por dónde iba cada pieza (en el navegador), salta de a 30 s, cambia
-de velocidad y se controla desde la pantalla bloqueada (Media Session).
+recuerda por dónde iba cada pieza (en el navegador), reproduce las series
+completas desde el primer capítulo, salta de a 30 s, cambia de velocidad y se
+controla desde la pantalla bloqueada (Media Session).
 
 Para escuchar sin conexión está el feed RSS
 (`https://status-tc.aebn.cl/audioteca/rss`), que sirve en cualquier app de

@@ -22,13 +22,18 @@ export default function App() {
 
   return (
     <ProveedorReproductor>
+      <a className="saltar" href="#contenido">Saltar al contenido</a>
       <header className="barra">
         <Link className="marca" href="/">
           AUDIOTECA
         </Link>
-        <Link href="/buscar">Buscar</Link>
+        <nav aria-label="Navegación principal">
+          <Link href="/" aria-current={ruta.vista === 'inicio' ? 'page' : undefined}>Inicio</Link>
+          <Link href="/buscar" aria-current={ruta.vista === 'buscar' ? 'page' : undefined}>Buscar</Link>
+          <a href={RSS_URL}>Seguir por RSS</a>
+        </nav>
       </header>
-      <main>
+      <main id="contenido">
         <Vista ruta={ruta} />
       </main>
       <footer className="pie">

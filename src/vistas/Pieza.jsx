@@ -3,6 +3,7 @@ import { useReproductor } from '../Reproductor.jsx'
 import { Link, conParametros } from '../ruta.jsx'
 import { usarApi } from '../usarApi.js'
 import { Cargando, Fallo, NoEncontrada, useTitulo } from './Estados.jsx'
+import { colaDeSerie } from '../serie.js'
 
 export function Pieza({ cuenta, serie: slugSerie, slug }) {
   const serie = usarApi(`series/${encodeURIComponent(cuenta)}/${encodeURIComponent(slugSerie)}`)
@@ -17,6 +18,7 @@ export function Pieza({ cuenta, serie: slugSerie, slug }) {
 
   const s = serie.datos
   const pieza = { ...p, account: cuenta, serie: s.slug, serie_title: s.title, cover: s.cover }
+  const cola = colaDeSerie(s, cuenta)
   const actual = reproductor.pieza?.file.url === p.file.url
   const licencia = LICENCIAS[p.license] ?? LICENCIAS['cc-by-sa']
   const nombre = (t) => tematicas.datos?.topics.find((x) => x.slug === t)?.name ?? t
@@ -33,10 +35,10 @@ export function Pieza({ cuenta, serie: slugSerie, slug }) {
         <button
           type="button"
           className="principal"
-          onClick={() => reproductor.escuchar(pieza)}
+          onClick={() => reproductor.escuchar(pieza, cola)}
           disabled={actual && reproductor.sonando}
         >
-          {actual && reproductor.sonando ? 'Sonando' : actual ? 'Seguir escuchando' : 'Escuchar'}
+          {actual && reproductor.sonando ? 'Sonando' : actual ? 'Seguir escuchando' : 'Escuchar y continuar la serie'}
         </button>
         <a href={p.file.url} download>
           Descargar {p.file.format.toUpperCase()}

@@ -42,17 +42,38 @@ function guardarPosicion(pieza, segundos) {
 
 export function ProveedorReproductor({ children }) {
   const [pieza, setPieza] = useState(null)
+  const [cola, setCola] = useState([])
   const [sonando, setSonando] = useState(false)
   const [velocidad, setVelocidad] = useState(1)
   const audio = useRef(null)
 
-  const escuchar = (p) => {
+  const indice = pieza ? cola.findIndex((p) => p.file.url === pieza.file.url) : -1
+
+  const escuchar = (p, piezas = [p]) => {
+    setCola(piezas.some((item) => item.file.url === p.file.url) ? piezas : [p])
     if (pieza?.file.url === p.file.url) {
       audio.current?.play()
       return
     }
     setPieza(p)
   }
+
+  const irA = (siguiente) => {
+    if (siguiente < 0 || siguiente >= cola.length) return false
+    setPieza(cola[siguiente])
+    return true
+  }
+
+  const anterior = () => {
+    const el = audio.current
+    if (el?.currentTime > 5) {
+      el.currentTime = 0
+      return
+    }
+    irA(indice - 1)
+  }
+
+  const siguiente = () => irA(indice + 1)
 
   // Al cambiar de pieza: retomar donde iba y anunciarla al sistema.
   useEffect(() => {
@@ -74,11 +95,13 @@ export function ProveedorReproductor({ children }) {
       })
       navigator.mediaSession.setActionHandler('seekbackward', () => (el.currentTime = Math.max(0, el.currentTime - SALTO)))
       navigator.mediaSession.setActionHandler('seekforward', () => (el.currentTime = el.currentTime + SALTO))
+      navigator.mediaSession.setActionHandler('previoustrack', anterior)
+      navigator.mediaSession.setActionHandler('nexttrack', siguiente)
     }
     return () => el.removeEventListener('loadedmetadata', alCargar)
     // velocidad se aplica aparte; no debe reiniciar la pieza.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pieza])
+  }, [pieza, indice, cola])
 
   useEffect(() => {
     if (audio.current) audio.current.playbackRate = velocidad
@@ -90,7 +113,7 @@ export function ProveedorReproductor({ children }) {
   }
 
   return (
-    <Contexto.Provider value={{ pieza, sonando, escuchar }}>
+    <Contexto.Provider value={{ pieza, sonando, escuchar, cola }}>
       {children}
       {pieza && (
         <section className="reproductor" aria-label="Reproductor">
@@ -98,6 +121,11 @@ export function ProveedorReproductor({ children }) {
             <Link href={`/${pieza.account}/${pieza.serie}/${pieza.slug}`}>{pieza.title}</Link>
             <span> · {pieza.account}</span>
           </p>
+          {cola.length > 1 && (
+            <p className="reproductor__cola" aria-live="polite">
+              Serie continua · {indice + 1} de {cola.length}
+            </p>
+          )}
           <audio
             ref={audio}
             src={pieza.file.url}
@@ -116,9 +144,15 @@ export function ProveedorReproductor({ children }) {
             onEnded={() => {
               setSonando(false)
               guardarPosicion(pieza, 0)
+              siguiente()
             }}
           />
           <div className="reproductor__botones">
+            {cola.length > 1 && (
+              <button type="button" onClick={anterior} disabled={indice <= 0} aria-label="Pieza anterior de la serie">
+                ← Anterior
+              </button>
+            )}
             <button type="button" onClick={() => saltar(-SALTO)}>
               −{SALTO} s
             </button>
@@ -132,11 +166,17 @@ export function ProveedorReproductor({ children }) {
             >
               {velocidad}×
             </button>
+            {cola.length > 1 && (
+              <button type="button" onClick={siguiente} disabled={indice >= cola.length - 1} aria-label="Pieza siguiente de la serie">
+                Siguiente →
+              </button>
+            )}
             <button
               type="button"
               onClick={() => {
                 if (audio.current) guardarPosicion(pieza, audio.current.currentTime)
                 setPieza(null)
+                setCola([])
               }}
               aria-label="Cerrar el reproductor"
             >

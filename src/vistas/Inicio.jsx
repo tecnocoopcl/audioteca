@@ -1,16 +1,15 @@
 import { usarApi } from '../usarApi.js'
-import { plural } from '../formato.js'
 import { Link, navegar } from '../ruta.jsx'
 import { Cargando, Fallo, useTitulo } from './Estados.jsx'
-import { ListaDePiezas, Paginas } from './Listas.jsx'
 import { descubrimientoDelDia } from '../descubrimiento.js'
 import { duracion } from '../formato.js'
 import { useReproductor } from '../Reproductor.jsx'
+import { colaDeSerie } from '../serie.js'
 
-export function Inicio({ pagina }) {
+export function Inicio() {
   useTitulo(null)
-  const tematicas = usarApi('tematicas')
-  const piezas = usarApi('piezas', { pagina })
+  const piezas = usarApi('piezas')
+  const series = usarApi('series')
   const reproductor = useReproductor()
   const destacada = piezas.datos ? descubrimientoDelDia(piezas.datos.pieces) : null
 
@@ -27,37 +26,58 @@ export function Inicio({ pagina }) {
         {destacada && <Descubrimiento pieza={destacada} escuchar={reproductor.escuchar} />}
       </section>
 
-      <h2>Temáticas</h2>
-      {tematicas.cargando ? (
-        <Cargando />
-      ) : tematicas.error ? (
-        <Fallo {...tematicas} />
-      ) : (
-        <ul className="tematicas">
-          {tematicas.datos.topics.map((t) => (
-            <li key={t.slug}>
-              <Link href={`/tematica/${t.slug}`}>
-                {t.name}
-                <span>{plural(t.count, 'pieza', 'piezas')}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <h2>Lo último</h2>
-      {piezas.cargando && !piezas.datos ? (
-        <Cargando />
-      ) : piezas.error ? (
-        <Fallo {...piezas} />
-      ) : (
-        <>
-          <ListaDePiezas piezas={piezas.datos.pieces} />
-          <Paginas ruta="/" {...piezas.datos} />
-        </>
-      )}
+      <section className="ultimas-series" aria-labelledby="titulo-ultimas-series">
+        <h2 id="titulo-ultimas-series">Lo último</h2>
+        <p className="bajada-seccion">Series actualizadas recientemente en la audioteca de la cooperativa.</p>
+        {series.cargando && !series.datos ? (
+          <Cargando />
+        ) : series.error ? (
+          <Fallo {...series} />
+        ) : (
+          <ListaDeSeries series={series.datos.series} escuchar={reproductor.escuchar} />
+        )}
+      </section>
     </>
   )
+}
+
+function ListaDeSeries({ series, escuchar }) {
+  const ordenadas = [...series].sort((a, b) => fechaReciente(b).localeCompare(fechaReciente(a)))
+  if (!ordenadas.length) return <p className="estado">Todavía no hay series publicadas.</p>
+  return (
+    <div className="lista-series">
+      {ordenadas.map((serie) => {
+        const cola = colaDeSerie(serie)
+        const descripcion = serie.description?.length > 180 ? `${serie.description.slice(0, 177).trim()}…` : serie.description
+        return (
+          <article className="tarjeta-serie" key={`${serie.account}/${serie.slug}`}>
+            {serie.cover ? (
+              <Link className="tarjeta-serie__portada" href={`/${serie.account}/${serie.slug}`} aria-label={`Ver serie ${serie.title}`}>
+                <img src={serie.cover} alt="" />
+              </Link>
+            ) : (
+              <div className="tarjeta-serie__portada tarjeta-serie__portada--vacia" aria-hidden="true">AUDIO</div>
+            )}
+            <div className="tarjeta-serie__contenido">
+              <p className="sobrelinea">{serie.account} · {serie.pieces.length} {serie.pieces.length === 1 ? 'pieza' : 'piezas'}</p>
+              <h3>
+                <Link href={`/${serie.account}/${serie.slug}`}>{serie.title}</Link>
+              </h3>
+              {descripcion && <p>{descripcion}</p>}
+              <div className="acciones tarjeta-serie__acciones">
+                <button type="button" onClick={() => escuchar(cola[0], cola)} disabled={!cola.length}>Reproducir serie</button>
+                <Link href={`/${serie.account}/${serie.slug}`}>Ver serie</Link>
+              </div>
+            </div>
+          </article>
+        )
+      })}
+    </div>
+  )
+}
+
+function fechaReciente(serie) {
+  return serie.pieces.reduce((ultima, pieza) => pieza.date > ultima ? pieza.date : ultima, '')
 }
 
 function Descubrimiento({ pieza, escuchar }) {

@@ -29,3 +29,5 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
   abandonar el estilo de tinta ni el soporte móvil.
 - Portada ampliada a un formato editorial y reemplazo del bloque de temáticas
   por las series actualizadas recientemente.
+- Piezas de cada serie presentadas en orden cronológico, desde la más antigua
+  hasta la más reciente, igual que la cola de reproducción continua.

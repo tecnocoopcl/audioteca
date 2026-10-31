@@ -35,13 +35,13 @@ export function Serie({ cuenta, slug }) {
       )}
       <h2>Piezas</h2>
       <ul className="lista">
-        {s.pieces.map((p) => (
+        {cola.map((p) => (
           <li key={p.slug}>
             <div className="fila-pieza">
               <Link className="titulo" href={`/${cuenta}/${s.slug}/${p.slug}`}>
                 {p.title}
               </Link>
-              <button type="button" onClick={() => reproductor.escuchar(cola.find((item) => item.slug === p.slug), cola)}>
+              <button type="button" onClick={() => reproductor.escuchar(p, cola)}>
                 Escuchar
               </button>
             </div>

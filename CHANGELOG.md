@@ -4,33 +4,44 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- Las piezas de cada serie llegan ordenadas desde la API (de la más antigua a
+  la más nueva); el sitio ya no las invierte. Requiere la versión de
+  tecno-cooperativa-backend que las ordena.
+- Los controles de pista de la pantalla bloqueada siguen la cola sin volver a
+  anunciar la pieza que suena.
+
+### Removed
+
+- Las temáticas: la página `/tematica/<slug>` y la ficha de cada pieza ya no
+  las muestran. El contenido se organiza por series y etiquetas.
+
 ## [0.2.0] - 2026-11-01
 
 ### Added
 
-- Reproducción continua de series, en orden desde el primer capítulo, con
-  controles anterior/siguiente, posición en la cola y controles de pista en
-  Media Session.
-- Recurso de descubrimiento diario estable, con descripción y acceso directo
-  desde la portada.
-- Navegación principal más visible, enlace para saltar al contenido y estados
-  más explícitos en el reproductor.
-
-- Primera versión: portada con temáticas y lo último publicado, páginas de
-  temática, búsqueda, autor, serie y pieza, sobre la API de la audioteca de
-  tecno-cooperativa-backend.
+- Primera versión: portada, búsqueda, autor, serie y pieza, sobre la API de la
+  audioteca de tecno-cooperativa-backend.
 - Reproductor al pie que sigue sonando mientras se navega: recuerda la
   posición de cada pieza, salta de a 30 s, cambia de velocidad y responde a
   los controles de la pantalla bloqueada.
-- Estilo de tinta: negro sobre blanco, sin animaciones y paginado.
-- Deploy a GitHub Pages (audioteca.aebn.cl) y CI con lint y build.
-- CI ejecuta también los tests.
+- Reproducción continua de series, de la pieza más antigua a la más nueva,
+  con controles anterior/siguiente, posición en la cola y controles de pista
+  en Media Session.
+- Descubrimiento del día: una pieza estable durante el día, con descripción y
+  acceso directo desde la portada.
+- Navegación principal más visible, enlace para saltar al contenido y estados
+  más explícitos en el reproductor.
+- Estilo de tinta: negro sobre blanco y sin animaciones.
+- Deploy a GitHub Pages (audioteca.aebn.cl) y CI con lint, tests y build.
 
 ### Changed
 
-- Portada reorganizada para priorizar búsqueda, descubrimiento y temáticas sin
-  abandonar el estilo de tinta ni el soporte móvil.
-- Portada ampliada a un formato editorial y reemplazo del bloque de temáticas
-  por las series actualizadas recientemente.
-- Piezas de cada serie presentadas en orden cronológico, desde la más antigua
-  hasta la más reciente, igual que la cola de reproducción continua.
+- Portada editorial: búsqueda, descubrimiento del día y las series
+  actualizadas recientemente.
+- Piezas de cada serie presentadas de la más antigua a la más nueva, igual que
+  la cola de reproducción.
+
+[Unreleased]: https://github.com/tecnocoopcl/audioteca/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/tecnocoopcl/audioteca/releases/tag/v0.2.0

@@ -93,13 +93,22 @@ export function ProveedorReproductor({ children }) {
         album: pieza.serie_title,
         artwork: pieza.cover ? [{ src: pieza.cover }] : [],
       })
-      navigator.mediaSession.setActionHandler('seekbackward', () => (el.currentTime = Math.max(0, el.currentTime - SALTO)))
-      navigator.mediaSession.setActionHandler('seekforward', () => (el.currentTime = el.currentTime + SALTO))
-      navigator.mediaSession.setActionHandler('previoustrack', anterior)
-      navigator.mediaSession.setActionHandler('nexttrack', siguiente)
     }
     return () => el.removeEventListener('loadedmetadata', alCargar)
     // velocidad se aplica aparte; no debe reiniciar la pieza.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pieza])
+
+  // Los controles de la pantalla bloqueada siguen la cola: se rehacen cuando
+  // cambia, sin tocar la pieza que suena.
+  useEffect(() => {
+    const el = audio.current
+    if (!pieza || !el || !('mediaSession' in navigator)) return
+    navigator.mediaSession.setActionHandler('seekbackward', () => (el.currentTime = Math.max(0, el.currentTime - SALTO)))
+    navigator.mediaSession.setActionHandler('seekforward', () => (el.currentTime = el.currentTime + SALTO))
+    navigator.mediaSession.setActionHandler('previoustrack', anterior)
+    navigator.mediaSession.setActionHandler('nexttrack', siguiente)
+    // anterior y siguiente dependen de indice y cola.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pieza, indice, cola])
 

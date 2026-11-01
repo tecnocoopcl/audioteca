@@ -7,14 +7,12 @@ import { colaDeSerie } from '../serie.js'
 
 export function Serie({ cuenta, slug }) {
   const serie = usarApi(`series/${encodeURIComponent(cuenta)}/${encodeURIComponent(slug)}`)
-  const tematicas = usarApi('tematicas')
   const reproductor = useReproductor()
   useTitulo(serie.datos?.title)
 
   if (serie.cargando) return <Cargando />
   if (serie.error) return <Fallo {...serie} />
   const s = serie.datos
-  const nombre = (t) => tematicas.datos?.topics.find((x) => x.slug === t)?.name ?? t
   const cola = colaDeSerie(s, cuenta)
 
   return (
@@ -46,7 +44,7 @@ export function Serie({ cuenta, slug }) {
               </button>
             </div>
             <p className="meta">
-              {[duracion(p.duration), p.topics.map(nombre).join(', '), fecha(p.date)].filter(Boolean).join(' · ')}
+              {[duracion(p.duration), p.tags.join(', '), fecha(p.date)].filter(Boolean).join(' · ')}
             </p>
           </li>
         ))}

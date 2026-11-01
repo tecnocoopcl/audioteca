@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 // no con recargas importa: una recarga corta lo que suena.
 //
 //   /                          portada
-//   /tematica/<slug>           una temática (?pagina=)
 //   /buscar                    búsqueda (?q=&pagina=)
 //   /<cuenta>                  las series de un autor
 //   /<cuenta>/<serie>          una serie
@@ -17,7 +16,6 @@ export function parseRuta({ pathname, search }) {
   const q = new URLSearchParams(search)
   const pagina = Number(q.get('pagina')) || 1
   if (partes.length === 0) return { vista: 'inicio', pagina }
-  if (partes[0] === 'tematica' && partes.length === 2) return { vista: 'tematica', tematica: partes[1], pagina }
   if (partes[0] === 'buscar' && partes.length === 1) return { vista: 'buscar', q: q.get('q') ?? '', pagina }
   if (partes.length === 1) return { vista: 'autor', cuenta: partes[0] }
   if (partes.length === 2) return { vista: 'serie', cuenta: partes[0], serie: partes[1] }

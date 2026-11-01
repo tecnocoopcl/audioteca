@@ -7,7 +7,6 @@ import { colaDeSerie } from '../serie.js'
 
 export function Pieza({ cuenta, serie: slugSerie, slug }) {
   const serie = usarApi(`series/${encodeURIComponent(cuenta)}/${encodeURIComponent(slugSerie)}`)
-  const tematicas = usarApi('tematicas')
   const reproductor = useReproductor()
   const p = serie.datos?.pieces.find((x) => x.slug === slug)
   useTitulo(p?.title)
@@ -21,7 +20,6 @@ export function Pieza({ cuenta, serie: slugSerie, slug }) {
   const cola = colaDeSerie(s, cuenta)
   const actual = reproductor.pieza?.file.url === p.file.url
   const licencia = LICENCIAS[p.license] ?? LICENCIAS['cc-by-sa']
-  const nombre = (t) => tematicas.datos?.topics.find((x) => x.slug === t)?.name ?? t
 
   return (
     <>
@@ -61,15 +59,6 @@ export function Pieza({ cuenta, serie: slugSerie, slug }) {
             <dd>{fecha(p.date)}</dd>
           </>
         )}
-        <dt>Temáticas</dt>
-        <dd>
-          {p.topics.map((t, i) => (
-            <span key={t}>
-              {i > 0 && ', '}
-              <Link href={`/tematica/${t}`}>{nombre(t)}</Link>
-            </span>
-          ))}
-        </dd>
         {p.tags.length > 0 && (
           <>
             <dt>Etiquetas</dt>

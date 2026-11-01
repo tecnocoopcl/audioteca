@@ -1,7 +1,7 @@
 # audioteca
 
 La audioteca de la tecno-cooperativa (audioteca.aebn.cl): charlas, crónicas,
-clases y relatos de los socios, ordenados por temática, para escuchar en la
+clases y relatos de los socios, organizados en series, para escuchar en la
 micro, en el camino o en casa.
 
 Como [música](https://github.com/tecnocoopcl/musica), el contenido no vive
@@ -11,10 +11,10 @@ solo lo lee. El diseño completo está en el ADR-021 de espacio.
 
 ```
 pod del socio                                    tecno-cooperativa-backend          esta app
-<pod>/Aplicaciones/estudio/data/audioteca.json → GET /audioteca/tematicas        → /
-                               audioteca/…mp3     GET /audioteca/piezas           → /tematica/<slug>, /buscar
-                                                  GET /audioteca/series[/…]       → /<cuenta>[/<serie>[/<pieza>]]
-                                                  GET /audioteca/rss[/<tematica>] → apps de podcasts
+<pod>/Aplicaciones/estudio/data/audioteca.json → GET /audioteca/series           → /
+                               audioteca/…mp3     GET /audioteca/piezas           → /, /buscar
+                                                  GET /audioteca/series/…         → /<cuenta>[/<serie>[/<pieza>]]
+                                                  GET /audioteca/rss              → apps de podcasts
 ```
 
 Los audios se reproducen directo desde el pod de cada socio.
@@ -22,7 +22,6 @@ Los audios se reproducen directo desde el pod de cada socio.
 ## Rutas
 
 - `/`: descubrimiento del día y series actualizadas recientemente.
-- `/tematica/<slug>`: una temática, paginada.
 - `/buscar?q=`: busca en título, descripción, etiquetas, serie y autor.
 - `/<cuenta>`: las series de un autor.
 - `/<cuenta>/<serie>`: una serie, con sus piezas.

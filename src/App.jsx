@@ -7,7 +7,6 @@ import { Inicio } from './vistas/Inicio.jsx'
 import { NoEncontrada } from './vistas/Estados.jsx'
 import { Pieza } from './vistas/Pieza.jsx'
 import { Serie } from './vistas/Serie.jsx'
-import { Tematica } from './vistas/Tematica.jsx'
 
 /**
  * Audioteca de la tecno-cooperativa. El contenido no vive aquí: cada socio
@@ -50,8 +49,6 @@ function Vista({ ruta }) {
   switch (ruta.vista) {
     case 'inicio':
       return <Inicio />
-    case 'tematica':
-      return <Tematica slug={ruta.tematica} pagina={ruta.pagina} />
     case 'buscar':
       return <Buscar key={ruta.q} q={ruta.q} pagina={ruta.pagina} />
     case 'autor':

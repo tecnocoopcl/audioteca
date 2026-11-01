@@ -4,6 +4,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-01
+
 ### Added
 
 - Reproducción continua de series, en orden desde el primer capítulo, con
@@ -22,6 +24,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
   los controles de la pantalla bloqueada.
 - Estilo de tinta: negro sobre blanco, sin animaciones y paginado.
 - Deploy a GitHub Pages (audioteca.aebn.cl) y CI con lint y build.
+- CI ejecuta también los tests.
 
 ### Changed
 

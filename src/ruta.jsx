@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 // Router mínimo, sin dependencias, como el de musica. Navegar con pushState y
 // no con recargas importa: una recarga corta lo que suena.
 //
-//   /                          portada (?pagina=)
+//   /                          portada
 //   /tematica/<slug>           una temática (?pagina=)
 //   /buscar                    búsqueda (?q=&pagina=)
 //   /<cuenta>                  las series de un autor

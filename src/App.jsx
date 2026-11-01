@@ -49,7 +49,7 @@ export default function App() {
 function Vista({ ruta }) {
   switch (ruta.vista) {
     case 'inicio':
-      return <Inicio pagina={ruta.pagina} />
+      return <Inicio />
     case 'tematica':
       return <Tematica slug={ruta.tematica} pagina={ruta.pagina} />
     case 'buscar':

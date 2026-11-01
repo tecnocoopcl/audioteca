@@ -21,7 +21,7 @@ Los audios se reproducen directo desde el pod de cada socio.
 
 ## Rutas
 
-- `/`: temáticas y lo último publicado.
+- `/`: descubrimiento del día y series actualizadas recientemente.
 - `/tematica/<slug>`: una temática, paginada.
 - `/buscar?q=`: busca en título, descripción, etiquetas, serie y autor.
 - `/<cuenta>`: las series de un autor.

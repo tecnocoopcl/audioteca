@@ -4,10 +4,13 @@ import { usarApi } from '../usarApi.js'
 import { Cargando, Fallo, useTitulo } from './Estados.jsx'
 import { useReproductor } from '../Reproductor.jsx'
 import { colaDeSerie } from '../serie.js'
+import { claveDePieza, textoDeEscuchas } from '../escuchas.js'
+import { usarEscuchas } from '../usarEscuchas.js'
 
 export function Serie({ cuenta, slug }) {
   const serie = usarApi(`series/${encodeURIComponent(cuenta)}/${encodeURIComponent(slug)}`)
   const reproductor = useReproductor()
+  const plays = usarEscuchas(cuenta)
   useTitulo(serie.datos?.title)
 
   if (serie.cargando) return <Cargando />
@@ -44,7 +47,15 @@ export function Serie({ cuenta, slug }) {
               </button>
             </div>
             <p className="meta">
-              {[duracion(p.duration), p.tags.join(', '), fecha(p.date)].filter(Boolean).join(' · ')}
+              {[
+                reproductor.fueEscuchada(p) && '✓ escuchada',
+                duracion(p.duration),
+                p.tags.join(', '),
+                fecha(p.date),
+                textoDeEscuchas(plays[claveDePieza(p)]),
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             </p>
           </li>
         ))}

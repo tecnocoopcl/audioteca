@@ -4,10 +4,13 @@ import { Link, conParametros } from '../ruta.jsx'
 import { usarApi } from '../usarApi.js'
 import { Cargando, Fallo, NoEncontrada, useTitulo } from './Estados.jsx'
 import { colaDeSerie } from '../serie.js'
+import { claveDePieza, textoDeEscuchas } from '../escuchas.js'
+import { usarEscuchas } from '../usarEscuchas.js'
 
 export function Pieza({ cuenta, serie: slugSerie, slug }) {
   const serie = usarApi(`series/${encodeURIComponent(cuenta)}/${encodeURIComponent(slugSerie)}`)
   const reproductor = useReproductor()
+  const plays = usarEscuchas(cuenta)
   const p = serie.datos?.pieces.find((x) => x.slug === slug)
   useTitulo(p?.title)
 
@@ -20,6 +23,8 @@ export function Pieza({ cuenta, serie: slugSerie, slug }) {
   const cola = colaDeSerie(s, cuenta)
   const actual = reproductor.pieza?.file.url === p.file.url
   const licencia = LICENCIAS[p.license] ?? LICENCIAS['cc-by-sa']
+  const escuchas = textoDeEscuchas(plays[claveDePieza(pieza)])
+  const yaEscuchada = reproductor.fueEscuchada(pieza)
 
   return (
     <>
@@ -70,6 +75,12 @@ export function Pieza({ cuenta, serie: slugSerie, slug }) {
                 </span>
               ))}
             </dd>
+          </>
+        )}
+        {(escuchas || yaEscuchada) && (
+          <>
+            <dt>Escuchas</dt>
+            <dd>{[yaEscuchada && '✓ ya la escuchaste', escuchas].filter(Boolean).join(' · ')}</dd>
           </>
         )}
         <dt>Licencia</dt>

@@ -4,6 +4,18 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Escuchas**: una reproducción cuenta al oír el 80 % de la pieza o 5
+  minutos (adelantar no suma). Entonces la pieza queda marcada «✓ escuchada»
+  en este navegador y se suma al contador de todos (`POST
+  /audioteca/escuchas`, anónimo). Las series y las piezas muestran cuántas
+  escuchas llevan. Requiere la versión de tecno-cooperativa-backend con
+  `/audioteca/escuchas`.
+- **Dentro de espacio** (SDK 0.3.0 vendorizada en `src/vendor/espacio-sdk`):
+  le cuenta a Inicio las «piezas escuchadas» y los «minutos escuchados»
+  (ADR-030 de espacio). Fuera de espacio no cambia nada.
+
 ### Changed
 
 - Las piezas de cada serie llegan ordenadas desde la API (de la más antigua a

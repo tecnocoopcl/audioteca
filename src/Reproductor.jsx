@@ -1,4 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { anotarEscucha } from './api.js'
+import { fueEscuchada, marcarEscuchada, seguimiento } from './escuchas.js'
+import { contarActividad } from './espacio.js'
 import { Link } from './ruta.jsx'
 
 /**
@@ -45,7 +48,19 @@ export function ProveedorReproductor({ children }) {
   const [cola, setCola] = useState([])
   const [sonando, setSonando] = useState(false)
   const [velocidad, setVelocidad] = useState(1)
+  // Sube con cada escucha nueva: las vistas vuelven a mirar sus marcas.
+  const [escuchas, setEscuchas] = useState(0)
   const audio = useRef(null)
+  const oido = useRef(seguimiento())
+
+  // Una reproducción cuenta al oír el 80 % o 5 min (ver escuchas.js): se
+  // marca aquí, se le cuenta a espacio y se suma al contador de todos.
+  const registrarEscucha = (p) => {
+    marcarEscuchada(p)
+    setEscuchas((n) => n + 1)
+    contarActividad('piezas-escuchadas')
+    anotarEscucha(p)
+  }
 
   const indice = pieza ? cola.findIndex((p) => p.file.url === pieza.file.url) : -1
 
@@ -79,9 +94,11 @@ export function ProveedorReproductor({ children }) {
   useEffect(() => {
     const el = audio.current
     if (!pieza || !el) return
+    oido.current = seguimiento()
     const desde = leerPosicion(pieza)
     const alCargar = () => {
       if (desde && desde < el.duration - 10) el.currentTime = desde
+      oido.current.desde(el.currentTime)
       el.playbackRate = velocidad
       el.play().catch(() => {})
     }
@@ -122,7 +139,7 @@ export function ProveedorReproductor({ children }) {
   }
 
   return (
-    <Contexto.Provider value={{ pieza, sonando, escuchar, cola }}>
+    <Contexto.Provider value={{ pieza, sonando, escuchar, cola, escuchas, fueEscuchada }}>
       {children}
       {pieza && (
         <section className="reproductor" aria-label="Reproductor">
@@ -140,7 +157,11 @@ export function ProveedorReproductor({ children }) {
             src={pieza.file.url}
             controls
             preload="metadata"
-            onPlay={() => setSonando(true)}
+            onPlay={(e) => {
+              setSonando(true)
+              oido.current.desde(e.currentTarget.currentTime)
+            }}
+            onSeeked={(e) => oido.current.desde(e.currentTarget.currentTime)}
             onPause={(e) => {
               setSonando(false)
               guardarPosicion(pieza, e.currentTarget.currentTime)
@@ -149,6 +170,10 @@ export function ProveedorReproductor({ children }) {
               // Cada ~15 s basta: escribir en cada evento es gastar batería.
               const t = e.currentTarget.currentTime
               if (Math.floor(t) % 15 === 0) guardarPosicion(pieza, t)
+              // La duración del audio manda; la que puso el autor, si aún no carga.
+              const r = oido.current.avanzar(t, e.currentTarget.duration || pieza.duration)
+              if (r.minutos > 0) contarActividad('minutos-escuchados', r.minutos)
+              if (r.escucha) registrarEscucha(pieza)
             }}
             onEnded={() => {
               setSonando(false)

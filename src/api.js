@@ -21,3 +21,20 @@ export async function pedir(ruta, parametros = {}) {
   if (!res.ok) throw new ErrorDeApi(res.status, `La audioteca respondió ${res.status}`)
   return res.json()
 }
+
+/**
+ * Suma una escucha de la pieza en el contador de todos (anónimo). Si la API
+ * no responde no pasa nada: la marca local y la cuenta de espacio ya están.
+ */
+export async function anotarEscucha(pieza) {
+  try {
+    await fetch(`${API_URL}/audioteca/escuchas`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ cuenta: pieza.account, serie: pieza.serie, pieza: pieza.slug }),
+      keepalive: true,
+    })
+  } catch {
+    // Sin conexión: esta escucha no suma al contador de todos.
+  }
+}

@@ -1,8 +1,10 @@
 import { duracion, fecha } from '../formato.js'
+import { useReproductor } from '../Reproductor.jsx'
 import { Link, conParametros } from '../ruta.jsx'
 
 /** Piezas de varias series: con su serie y autor. */
 export function ListaDePiezas({ piezas }) {
+  const reproductor = useReproductor()
   if (!piezas.length) return <p className="estado">Todavía no hay nada aquí.</p>
   return (
     <ul className="lista">
@@ -11,7 +13,11 @@ export function ListaDePiezas({ piezas }) {
           <Link className="titulo" href={`/${p.account}/${p.serie}/${p.slug}`}>
             {p.title}
           </Link>
-          <p className="meta">{[p.serie_title, p.account, duracion(p.duration), fecha(p.date)].filter(Boolean).join(' · ')}</p>
+          <p className="meta">
+            {[reproductor.fueEscuchada(p) && '✓ escuchada', p.serie_title, p.account, duracion(p.duration), fecha(p.date)]
+              .filter(Boolean)
+              .join(' · ')}
+          </p>
         </li>
       ))}
     </ul>

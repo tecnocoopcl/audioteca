@@ -23,9 +23,17 @@ export default function App() {
     <ProveedorReproductor>
       <a className="saltar" href="#contenido">Saltar al contenido</a>
       <header className="barra">
-        <Link className="marca" href="/">
-          AUDIOTECA
-        </Link>
+        <div className="marca-bloque">
+          <Link className="marca" href="/">
+            AUDIOTECA
+          </Link>
+          <p className="marca-leyenda">
+            Una plataforma{' '}
+            <a href="https://tecnocooperativa.cl" target="_blank" rel="noopener">
+              tecnocooperativa
+            </a>
+          </p>
+        </div>
         <nav aria-label="Navegación principal">
           <Link href="/" aria-current={ruta.vista === 'inicio' ? 'page' : undefined}>Inicio</Link>
           <Link href="/buscar" aria-current={ruta.vista === 'buscar' ? 'page' : undefined}>Buscar</Link>

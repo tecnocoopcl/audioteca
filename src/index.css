@@ -83,6 +83,12 @@ main,
   text-decoration: none;
 }
 
+/* La firma de las plataformas de la cooperativa, bajo la marca. */
+.marca-leyenda {
+  margin: 0.15em 0 0;
+  font-size: 0.75em;
+}
+
 a {
   color: var(--tinta);
   text-decoration: underline;

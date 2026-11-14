@@ -15,6 +15,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - **Dentro de espacio** (SDK 0.3.0 vendorizada en `src/vendor/espacio-sdk`):
   le cuenta a Inicio las «piezas escuchadas» y los «minutos escuchados»
   (ADR-030 de espacio). Fuera de espacio no cambia nada.
+- Bajo la marca, la firma «Una plataforma tecnocooperativa», enlazada a
+  `tecnocooperativa.cl`, como en Música.
 
 ### Changed
 

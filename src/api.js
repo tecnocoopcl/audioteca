@@ -1,6 +1,6 @@
 // Dónde está el backend de la cooperativa (tecno-cooperativa-backend), que
 // indexa las audiotecas de los pods. En desarrollo lo fija .env.development.
-export const API_URL = import.meta.env.VITE_API_URL || 'https://status-tc.aebn.cl'
+export const API_URL = import.meta.env.VITE_API_URL || 'https://api-tc.aebn.cl'
 
 export const RSS_URL = `${API_URL}/audioteca/rss`
 

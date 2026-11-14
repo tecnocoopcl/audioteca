@@ -39,7 +39,7 @@ completas desde el primer capítulo, salta de a 30 s, cambia de velocidad y se
 controla desde la pantalla bloqueada (Media Session).
 
 Para escuchar sin conexión está el feed RSS
-(`https://status-tc.aebn.cl/audioteca/rss`), que sirve en cualquier app de
+(`https://api-tc.aebn.cl/audioteca/rss`), que sirve en cualquier app de
 podcasts.
 
 ## Desarrollo

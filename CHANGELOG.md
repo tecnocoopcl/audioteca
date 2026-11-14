@@ -20,6 +20,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Changed
 
+- La API de la cooperativa pasa de `status-tc.aebn.cl` a `api-tc.aebn.cl`,
+  como en Música y espacio; también el enlace al feed RSS. El feed en
+  `status-tc.aebn.cl` sigue respondiendo, así que nadie pierde su suscripción.
 - Las piezas de cada serie llegan ordenadas desde la API (de la más antigua a
   la más nueva); el sitio ya no las invierte. Requiere la versión de
   tecno-cooperativa-backend que las ordena.

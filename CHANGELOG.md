@@ -18,11 +18,20 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - Bajo la marca, la firma «Una plataforma tecnocooperativa», enlazada a
   `tecnocooperativa.cl`, como en Música.
 
+### Fixed
+
+- El pie ya no queda más angosto que la barra y el contenido: su ancho máximo
+  estaba en `em` y con la letra más chica medía menos. Ahora los tres tienen el
+  mismo ancho y alineación.
+
 ### Changed
 
 - La API de la cooperativa pasa de `status-tc.aebn.cl` a `api-tc.aebn.cl`,
   como en Música y espacio; también el enlace al feed RSS. El feed en
   `status-tc.aebn.cl` sigue respondiendo, así que nadie pierde su suscripción.
+- El texto dice «tecnocooperativa», junto, en vez de «tecno-cooperativa»: el
+  pie, la descripción de la página y el README (que además da el dominio
+  `audioteca.tecnocooperativa.cl`).
 - Las piezas de cada serie llegan ordenadas desde la API (de la más antigua a
   la más nueva); el sitio ya no las invierte. Requiere la versión de
   tecno-cooperativa-backend que las ordena.

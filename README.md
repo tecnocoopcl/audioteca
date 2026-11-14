@@ -1,6 +1,6 @@
 # audioteca
 
-La audioteca de la tecno-cooperativa (audioteca.aebn.cl): charlas, crónicas,
+La audioteca de tecnocooperativa (audioteca.tecnocooperativa.cl): charlas, crónicas,
 clases y relatos de los socios, organizados en series, para escuchar en la
 micro, en el camino o en casa.
 
@@ -57,4 +57,4 @@ El backend local tiene que aceptar el origen de Vite:
 ## Deploy
 
 Cada push a `main` construye y publica en GitHub Pages
-(`.github/workflows/deploy.yml`), con el dominio `audioteca.aebn.cl`.
+(`.github/workflows/deploy.yml`), con el dominio `audioteca.tecnocooperativa.cl`.

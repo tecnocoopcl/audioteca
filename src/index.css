@@ -435,11 +435,17 @@ a:focus-visible {
 
 /* --- Pie --- */
 
+/* El tamaño pequeño va en los párrafos, no en el pie: su ancho máximo está en
+   em y, con la letra más chica, quedaba más angosto que la barra y el
+   contenido. */
 .pie {
   margin-top: 3em;
   padding-top: 12px;
   padding-bottom: 32px;
   border-top: 2px solid var(--tinta);
+}
+
+.pie p {
   font-size: 0.8em;
 }
 

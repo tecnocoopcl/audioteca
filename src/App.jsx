@@ -9,7 +9,7 @@ import { Pieza } from './vistas/Pieza.jsx'
 import { Serie } from './vistas/Serie.jsx'
 
 /**
- * Audioteca de la tecno-cooperativa. El contenido no vive aquí: cada socio
+ * Audioteca de tecnocooperativa. El contenido no vive aquí: cada socio
  * lo publica desde Estudio (espacio) en su pod, y tecno-cooperativa-backend
  * lo indexa. Esta app solo lee esa API.
  *
@@ -44,7 +44,7 @@ export default function App() {
         <Vista ruta={ruta} />
       </main>
       <footer className="pie">
-        <p>Audios de los socios de la tecno-cooperativa. Cada uno vive en el pod de quien lo hizo; aquí solo se leen.</p>
+        <p>Audios de los socios de tecnocooperativa. Cada uno vive en el pod de quien lo hizo; aquí solo se leen.</p>
         <p>
           Escúchalos sin conexión en tu app de podcasts: <a href={RSS_URL}>feed RSS</a>.
         </p>

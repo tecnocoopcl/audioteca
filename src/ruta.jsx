@@ -30,8 +30,9 @@ export function navegar(href) {
   window.dispatchEvent(new PopStateEvent('popstate'))
 }
 
-export function useRuta() {
-  const [ruta, setRuta] = useState(() => parseRuta(window.location))
+/** La ruta actual. En el servidor (prerender) se pasa `ubicacion`. */
+export function useRuta(ubicacion) {
+  const [ruta, setRuta] = useState(() => parseRuta(ubicacion ?? window.location))
 
   useEffect(() => {
     function onPop() {

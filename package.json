@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/paginas.js",
+    "build": "vite build && vite build --ssr src/servidor.jsx --outDir dist-servidor && node scripts/paginas.js",
     "lint": "oxlint",
     "test": "node --test",
     "preview": "vite preview"

@@ -6,6 +6,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Added
 
+- **Prerender**: el build deja la portada, `/buscar` y cada cuenta, serie y
+  pieza como HTML con la vista ya hecha (se lee sin JavaScript) y guarda en
+  `/_datos/` las respuestas de la API que usan. La app hidrata ese HTML y, al
+  navegar, lee esas copias: a la API solo van las búsquedas, las escuchas y lo
+  publicado después del último deploy. El deploy se repite cada 3 horas.
 - **Escuchas**: una reproducción cuenta al oír el 80 % de la pieza o 5
   minutos (adelantar no suma). Entonces la pieza queda marcada «✓ escuchada»
   en este navegador y se suma al contador de todos (`POST

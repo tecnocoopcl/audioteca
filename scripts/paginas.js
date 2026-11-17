@@ -1,8 +1,9 @@
-// Después de `vite build`: escribe un HTML por cada cuenta, serie y pieza
-// publicada, para que GitHub Pages responda 200 (y no 404) en esas rutas y
-// para que buscadores y previsualizadores de enlaces vean su título, su
-// descripción y su portada sin ejecutar la app.
+// Después de `vite build`: prerenderiza la audioteca con lo que hay en la API.
+// Cada cuenta, serie y pieza publicada, la portada y /buscar quedan como HTML
+// con la vista ya hecha (se lee sin JavaScript), con su título, descripción y
+// portada para buscadores y previsualizadores de enlaces:
 //
+//   dist/index.html  y  dist/buscar.html
 //   dist/<cuenta>.html                  y  dist/<cuenta>/index.html
 //   dist/<cuenta>/<serie>.html          y  dist/<cuenta>/<serie>/index.html
 //   dist/<cuenta>/<serie>/<pieza>.html  y  dist/<cuenta>/<serie>/<pieza>/index.html
@@ -10,12 +11,16 @@
 // GitHub Pages sirve /a/b desde a/b.html con 200; sin ese archivo redirigiría
 // (301) a /a/b/. El index.html cubre a quien llegue con la barra final.
 //
-// Lo que se publique entre un deploy y otro sigue cargando por 404.html (copia
-// de index.html), como antes. Si la API no responde, el build no falla: solo
-// queda ese respaldo.
+// Las respuestas de la API que usa cada vista quedan además en dist/_datos/
+// (ver src/datos.js): al navegar, la app las lee de ahí y no de la API. Solo
+// las escuchas y las búsquedas van siempre a la API.
+//
+// Lo que se publique entre un deploy y otro carga por 404.html (la app sin
+// prerender), que se lo pide a la API. Si la API no responde al construir, el
+// build no falla: queda solo ese respaldo.
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const ORIGEN = 'https://audioteca.tecnocooperativa.cl'
 const API_URL = process.env.VITE_API_URL || 'https://api-tc.aebn.cl'
@@ -48,6 +53,21 @@ export function conMetadatos(html, { titulo, descripcion, imagen, ruta, tipo = '
     .replace(/<title>[^<]*<\/title>/, `<title>${escapar(titulo)} · Audioteca</title>`)
     .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/, `<meta name="description" content="${desc}" />`)
     .replace(/\s*<\/head>/, `\n    ${etiquetas.join('\n    ')}\n  </head>`)
+}
+
+/**
+ * Pone la vista prerenderizada dentro de #root y, después, las respuestas de
+ * la API con que se hizo, para que el navegador hidrate sin pedirlas.
+ */
+export function conContenido(html, { ruta, marcado, datos }) {
+  // En un <script>, «</script>» o «<!--» cortarían el JSON: se escapa «<».
+  const json = JSON.stringify(datos).replace(/</g, '\\u003c')
+  return html.replace(
+    /<div id="root"><\/div>/,
+    () =>
+      `<div id="root" data-prerender="${escapar(ruta)}">${marcado}</div>\n    ` +
+      `<script type="application/json" id="datos-iniciales">${json}</script>`,
+  )
 }
 
 /** Las páginas a escribir: [{ ruta: '/cuenta/serie', html }]. */
@@ -84,32 +104,87 @@ export function paginas(html, series) {
   return [...salida.values()]
 }
 
+/** Pide a la API lo que necesita cada vista, una sola vez por petición. */
+function pedidor() {
+  const hechas = new Map()
+  return (ruta, parametros) => {
+    const url = new URL(`${API_URL}/audioteca/${ruta}`)
+    for (const [k, v] of Object.entries(parametros)) url.searchParams.set(k, v)
+    if (!hechas.has(url.href)) {
+      hechas.set(
+        url.href,
+        fetch(url, { headers: { accept: 'application/json' } }).then((res) => {
+          if (!res.ok) throw new Error(`${url.pathname} respondió ${res.status}`)
+          return res.json()
+        }),
+      )
+    }
+    return hechas.get(url.href)
+  }
+}
+
+async function escribir(dist, relativo, contenido) {
+  const destino = path.join(dist, relativo)
+  if (!destino.startsWith(dist + path.sep)) return
+  await mkdir(path.dirname(destino), { recursive: true })
+  await writeFile(destino, contenido)
+}
+
 async function main() {
-  const dist = path.resolve(fileURLToPath(new URL('../dist', import.meta.url)))
+  const raiz = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
+  const dist = path.join(raiz, 'dist')
   const html = await readFile(path.join(dist, 'index.html'), 'utf8')
 
   // Respaldo para rutas que aún no tienen página (lo publicado después del deploy).
   await writeFile(path.join(dist, '404.html'), html)
 
+  const pedir = pedidor()
   let series
   try {
-    const res = await fetch(`${API_URL}/audioteca/series`, { headers: { accept: 'application/json' } })
-    if (!res.ok) throw new Error(`la API respondió ${res.status}`)
-    series = (await res.json()).series ?? []
+    series = (await pedir('series', {})).series ?? []
   } catch (error) {
-    console.warn(`[paginas] sin páginas por ruta (${error.message}); queda solo 404.html`)
+    console.warn(`[paginas] sin prerender (${error.message}); queda solo 404.html`)
     return
   }
 
-  const lista = paginas(html, series)
-  for (const { ruta, html: contenido } of lista) {
-    for (const destino of [path.join(dist, `${ruta}.html`), path.join(dist, ruta, 'index.html')]) {
-      if (!destino.startsWith(dist + path.sep)) continue
-      await mkdir(path.dirname(destino), { recursive: true })
-      await writeFile(destino, contenido)
+  const app = await import(pathToFileURL(path.join(raiz, 'dist-servidor', 'servidor.js')).href)
+  const copias = new Map()
+
+  // La vista de `ruta` ya hecha, o null si la API no dio lo que necesita.
+  async function prerender(ruta) {
+    const datos = {}
+    try {
+      for (const [r, parametros] of app.necesita(app.parseRuta({ pathname: ruta, search: '' }))) {
+        const respuesta = await pedir(r, parametros)
+        datos[app.claveApi(r, parametros)] = respuesta
+        const archivo = app.archivoEstatico(r, parametros)
+        if (archivo) copias.set(archivo, respuesta)
+      }
+    } catch (error) {
+      console.warn(`[paginas] ${ruta} sin prerender (${error.message})`)
+      return null
     }
+    return { ruta, datos, marcado: app.render(ruta, datos) }
   }
-  console.log(`[paginas] ${lista.length} páginas desde ${series.length} series`)
+
+  const portada = await prerender('/')
+  if (portada) await writeFile(path.join(dist, 'index.html'), conContenido(html, portada))
+  const conTitulo = html.replace(/<title>[^<]*<\/title>/, '<title>Buscar · Audioteca</title>')
+  const buscar = await prerender('/buscar')
+  await escribir(dist, 'buscar.html', buscar ? conContenido(conTitulo, buscar) : conTitulo)
+
+  const lista = paginas(html, series)
+  for (const pagina of lista) {
+    const vista = await prerender(pagina.ruta)
+    const contenido = vista ? conContenido(pagina.html, vista) : pagina.html
+    await escribir(dist, `${pagina.ruta}.html`, contenido)
+    await escribir(dist, path.join(pagina.ruta, 'index.html'), contenido)
+  }
+
+  for (const [archivo, respuesta] of copias) {
+    await escribir(dist, path.join('_datos', ...archivo.split('/')), JSON.stringify(respuesta))
+  }
+  console.log(`[paginas] ${lista.length + 2} páginas y ${copias.size} copias de la API, desde ${series.length} series`)
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

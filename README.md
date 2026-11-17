@@ -27,12 +27,26 @@ Los audios se reproducen directo desde el pod de cada socio.
 - `/<cuenta>/<serie>`: una serie, con sus piezas.
 - `/<cuenta>/<serie>/<pieza>`: una pieza, para escuchar o descargar.
 
-El router es mínimo y sin dependencias (`src/ruta.jsx`). Al construir,
-`scripts/paginas.js` pide las series a la API y escribe un HTML por cada
-cuenta, serie y pieza, con su título, descripción y portada (Open Graph). Así
-GitHub Pages responde 200 en esas rutas y los enlaces se ven bien en buscadores,
-WhatsApp o Slack. Lo publicado entre un deploy y otro carga igual por
-`404.html` (copia de `index.html`), y el deploy se repite cada 3 horas.
+El router es mínimo y sin dependencias (`src/ruta.jsx`).
+
+### Prerender
+
+El sitio publicado es estático. Al construir, `scripts/paginas.js` pide el
+catálogo a la API y prerenderiza la portada, `/buscar` y cada cuenta, serie y
+pieza (con `src/servidor.jsx`): cada una queda como HTML con la vista ya hecha,
+que se lee sin JavaScript, con su título, descripción y portada (Open Graph)
+para buscadores, WhatsApp o Slack, y con 200 en GitHub Pages. En el navegador,
+la app hidrata ese HTML sin pedir nada.
+
+Las respuestas de la API que usa cada vista quedan además en `/_datos/`
+(`src/datos.js` dice cuáles): al navegar, la app las lee de ahí. A la API solo
+van las búsquedas y las escuchas, y lo publicado después del último deploy: esas
+rutas cargan por `404.html` (la app sin prerender), y una pieza nueva de una
+serie ya copiada se busca en la API antes de decir que no está. El deploy se
+repite cada 3 horas.
+
+Lo que depende de cada navegador (la marca «✓ escuchada», el descubrimiento
+del día) aparece después de hidratar (`src/montado.js`).
 
 ## Pensada para pantallas de tinta
 

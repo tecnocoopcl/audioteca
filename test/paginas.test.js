@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { conMetadatos, paginas } from '../scripts/paginas.js'
+import { conContenido, conMetadatos, paginas } from '../scripts/paginas.js'
 
 const HTML = `<html><head>
 <meta
@@ -59,4 +59,16 @@ test('ignora slugs que no son seguros como ruta de archivo', () => {
     { slug: 'ok', title: 'x', account: 'ana', pieces: [{ slug: 'a/b', title: 'y' }] },
   ]
   assert.deepEqual(paginas(HTML, malas).map((p) => p.ruta), ['/ana', '/ana/ok'])
+})
+
+test('pone la vista en #root y los datos escapados después', () => {
+  const html = conContenido(HTML, { ruta: '/ana', marcado: '<h1>ana</h1>', datos: { k: '</script><script>x' } })
+  assert.match(html, /<div id="root" data-prerender="\/ana"><h1>ana<\/h1><\/div>/)
+  assert.match(html, /<script type="application\/json" id="datos-iniciales">\{"k":"\\u003c\/script>\\u003cscript>x"\}<\/script>/)
+  assert.equal(html.match(/<\/script>/g).length, 1)
+})
+
+test('el marcado con $ no se interpreta como patrón de reemplazo', () => {
+  const html = conContenido(HTML, { ruta: '/', marcado: "<p>$& $1 $'</p>", datos: {} })
+  assert.match(html, /<p>\$& \$1 \$'<\/p>/)
 })

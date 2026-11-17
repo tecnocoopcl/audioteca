@@ -1,6 +1,7 @@
 import { duracion, fecha } from '../formato.js'
 import { Link } from '../ruta.jsx'
 import { usarApi } from '../usarApi.js'
+import { apiSerie } from '../datos.js'
 import { Cargando, Fallo, useTitulo } from './Estados.jsx'
 import { useReproductor } from '../Reproductor.jsx'
 import { colaDeSerie } from '../serie.js'
@@ -8,7 +9,7 @@ import { claveDePieza, textoDeEscuchas } from '../escuchas.js'
 import { usarEscuchas } from '../usarEscuchas.js'
 
 export function Serie({ cuenta, slug }) {
-  const serie = usarApi(`series/${encodeURIComponent(cuenta)}/${encodeURIComponent(slug)}`)
+  const serie = usarApi(apiSerie(cuenta, slug))
   const reproductor = useReproductor()
   const plays = usarEscuchas(cuenta)
   useTitulo(serie.datos?.title)

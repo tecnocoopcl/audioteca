@@ -1,20 +1,29 @@
 import { LICENCIAS, duracion, fecha, megas } from '../formato.js'
 import { useReproductor } from '../Reproductor.jsx'
 import { Link, conParametros } from '../ruta.jsx'
+import { useEffect } from 'react'
 import { usarApi } from '../usarApi.js'
+import { apiSerie } from '../datos.js'
 import { Cargando, Fallo, NoEncontrada, useTitulo } from './Estados.jsx'
 import { colaDeSerie } from '../serie.js'
 import { claveDePieza, textoDeEscuchas } from '../escuchas.js'
 import { usarEscuchas } from '../usarEscuchas.js'
 
 export function Pieza({ cuenta, serie: slugSerie, slug }) {
-  const serie = usarApi(`series/${encodeURIComponent(cuenta)}/${encodeURIComponent(slugSerie)}`)
+  const serie = usarApi(apiSerie(cuenta, slugSerie))
   const reproductor = useReproductor()
   const plays = usarEscuchas(cuenta)
   const p = serie.datos?.pieces.find((x) => x.slug === slug)
   useTitulo(p?.title)
+  // Una pieza publicada después del último build no está en la copia
+  // estática de su serie: se le pregunta a la API antes de decir que no está.
+  const buscarEnApi = serie.datos && !p && serie.origen === 'estatico'
+  const { refrescar } = serie
+  useEffect(() => {
+    if (buscarEnApi) refrescar()
+  }, [buscarEnApi, refrescar])
 
-  if (serie.cargando) return <Cargando />
+  if (serie.cargando || buscarEnApi) return <Cargando />
   if (serie.error) return <Fallo {...serie} />
   if (!p) return <NoEncontrada />
 

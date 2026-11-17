@@ -16,8 +16,8 @@ import { Serie } from './vistas/Serie.jsx'
  * Pensada para pantallas de tinta: negro sobre blanco, nada que se anime,
  * páginas numeradas en vez de scroll infinito.
  */
-export default function App() {
-  const ruta = useRuta()
+export default function App({ ubicacion }) {
+  const ruta = useRuta(ubicacion)
 
   return (
     <ProveedorReproductor>

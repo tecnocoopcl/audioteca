@@ -3,6 +3,7 @@ import { anotarEscucha } from './api.js'
 import { fueEscuchada, marcarEscuchada, seguimiento } from './escuchas.js'
 import { contarActividad } from './espacio.js'
 import { Link } from './ruta.jsx'
+import { useMontado } from './montado.js'
 
 /**
  * El reproductor vive fuera de las vistas: se puede seguir navegando la
@@ -52,6 +53,10 @@ export function ProveedorReproductor({ children }) {
   const [escuchas, setEscuchas] = useState(0)
   const audio = useRef(null)
   const oido = useRef(seguimiento())
+  // Las marcas de «escuchada» viven en este navegador: el HTML prerenderizado
+  // no las tiene, así que aparecen después de hidratar.
+  const montado = useMontado()
+  const fueEscuchadaAqui = (p) => montado && fueEscuchada(p)
 
   // Una reproducción cuenta al oír el 80 % o 5 min (ver escuchas.js): se
   // marca aquí, se le cuenta a espacio y se suma al contador de todos.
@@ -139,7 +144,7 @@ export function ProveedorReproductor({ children }) {
   }
 
   return (
-    <Contexto.Provider value={{ pieza, sonando, escuchar, cola, escuchas, fueEscuchada }}>
+    <Contexto.Provider value={{ pieza, sonando, escuchar, cola, escuchas, fueEscuchada: fueEscuchadaAqui }}>
       {children}
       {pieza && (
         <section className="reproductor" aria-label="Reproductor">

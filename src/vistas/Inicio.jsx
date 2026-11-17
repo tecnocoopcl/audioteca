@@ -5,13 +5,16 @@ import { descubrimientoDelDia } from '../descubrimiento.js'
 import { duracion } from '../formato.js'
 import { useReproductor } from '../Reproductor.jsx'
 import { colaDeSerie } from '../serie.js'
+import { useMontado } from '../montado.js'
 
 export function Inicio() {
   useTitulo(null)
   const piezas = usarApi('piezas')
   const series = usarApi('series')
   const reproductor = useReproductor()
-  const destacada = piezas.datos ? descubrimientoDelDia(piezas.datos.pieces) : null
+  // Depende del día y de este navegador: se elige después de hidratar.
+  const montado = useMontado()
+  const destacada = montado && piezas.datos ? descubrimientoDelDia(piezas.datos.pieces) : null
 
   return (
     <>

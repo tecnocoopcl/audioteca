@@ -46,11 +46,10 @@ export function Pieza({ cuenta, serie: slugSerie, slug }) {
       <div className="acciones">
         <button
           type="button"
-          className="principal"
+          className={actual && reproductor.sonando ? 'principal reproduciendo' : 'principal'}
           onClick={() => reproductor.escuchar(pieza, cola)}
-          disabled={actual && reproductor.sonando}
         >
-          {actual && reproductor.sonando ? 'Sonando' : actual ? 'Seguir escuchando' : 'Escuchar y continuar la serie'}
+          {actual && reproductor.sonando ? 'Reproduciendo' : actual ? 'Seguir escuchando' : 'Escuchar y continuar la serie'}
         </button>
         <a href={p.file.url} download>
           Descargar {p.file.format.toUpperCase()}

@@ -323,6 +323,12 @@ button.principal {
   color: var(--papel);
 }
 
+/* La pieza que suena: tinta invertida y, además, la palabra «Reproduciendo». */
+button.reproduciendo {
+  background: var(--tinta);
+  color: var(--papel);
+}
+
 button:disabled {
   cursor: default;
   border-style: dashed;
@@ -388,13 +394,14 @@ a:focus-visible {
   bottom: 0;
   background: var(--papel);
   border-top: 2px solid var(--tinta);
-  padding: 10px 16px 14px;
+  padding: 10px 0 14px;
 }
 
-.reproductor > * {
-  max-width: calc(72em - 32px);
-  margin-left: auto;
-  margin-right: auto;
+/* Mismo ancho y márgenes que la barra y el contenido (main, .barra, .pie). */
+.reproductor__interior {
+  max-width: 72em;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
 .reproductor__titulo {

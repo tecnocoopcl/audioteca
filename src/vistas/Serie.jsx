@@ -3,6 +3,7 @@ import { Link } from '../ruta.jsx'
 import { usarApi } from '../usarApi.js'
 import { apiSerie } from '../datos.js'
 import { Cargando, Fallo, useTitulo } from './Estados.jsx'
+import { BotonEscuchar } from '../BotonEscuchar.jsx'
 import { useReproductor } from '../Reproductor.jsx'
 import { colaDeSerie } from '../serie.js'
 import { claveDePieza, textoDeEscuchas } from '../escuchas.js'
@@ -43,9 +44,7 @@ export function Serie({ cuenta, slug }) {
               <Link className="titulo" href={`/${cuenta}/${s.slug}/${p.slug}`}>
                 {p.title}
               </Link>
-              <button type="button" onClick={() => reproductor.escuchar(p, cola)}>
-                Escuchar
-              </button>
+              <BotonEscuchar pieza={p} cola={cola} />
             </div>
             <p className="meta">
               {[

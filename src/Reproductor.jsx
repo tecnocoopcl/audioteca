@@ -167,62 +167,64 @@ export function ProveedorReproductor({ children }) {
       {children}
       {pieza && (
         <section className="reproductor" aria-label="Reproductor" ref={panel}>
-          <p className="reproductor__titulo">
-            <Link href={`/${pieza.account}/${pieza.serie}/${pieza.slug}`}>{pieza.title}</Link>
-            <span> · {pieza.account}</span>
-          </p>
-          {cola.length > 1 && (
-            <p className="reproductor__cola" aria-live="polite">
-              Serie continua · {indice + 1} de {cola.length}
+          <div className="reproductor__interior">
+            <p className="reproductor__titulo">
+              <Link href={`/${pieza.account}/${pieza.serie}/${pieza.slug}`}>{pieza.title}</Link>
+              <span> · {pieza.account}</span>
             </p>
-          )}
-          <audio
-            ref={audio}
-            src={pieza.file.url}
-            preload="metadata"
-            onPlay={(e) => {
-              setSonando(true)
-              oido.current.desde(e.currentTarget.currentTime)
-            }}
-            onSeeked={(e) => oido.current.desde(e.currentTarget.currentTime)}
-            onPause={(e) => {
-              setSonando(false)
-              guardarPosicion(pieza, e.currentTarget.currentTime)
-            }}
-            onTimeUpdate={(e) => {
-              // Cada ~15 s basta: escribir en cada evento es gastar batería.
-              const t = e.currentTarget.currentTime
-              if (Math.floor(t) % 15 === 0) guardarPosicion(pieza, t)
-              // La duración del audio manda; la que puso el autor, si aún no carga.
-              const r = oido.current.avanzar(t, e.currentTarget.duration || pieza.duration)
-              if (r.minutos > 0) contarActividad('minutos-escuchados', r.minutos)
-              if (r.escucha) registrarEscucha(pieza)
-            }}
-            onEnded={() => {
-              setSonando(false)
-              guardarPosicion(pieza, 0)
-              siguiente()
-            }}
-          />
-          <PanelAudio
-            audio={audio}
-            pieza={pieza}
-            sonando={sonando}
-            velocidad={velocidad}
-            salto={SALTO}
-            hayCola={cola.length > 1}
-            puedeAnterior={indice > 0}
-            puedeSiguiente={indice < cola.length - 1}
-            onAnterior={anterior}
-            onSiguiente={siguiente}
-            onSaltar={saltar}
-            onVelocidad={() => setVelocidad((v) => VELOCIDADES[(VELOCIDADES.indexOf(v) + 1) % VELOCIDADES.length])}
-            onCerrar={() => {
-              if (audio.current) guardarPosicion(pieza, audio.current.currentTime)
-              setPieza(null)
-              setCola([])
-            }}
-          />
+            {cola.length > 1 && (
+              <p className="reproductor__cola" aria-live="polite">
+                Serie continua · {indice + 1} de {cola.length}
+              </p>
+            )}
+            <audio
+              ref={audio}
+              src={pieza.file.url}
+              preload="metadata"
+              onPlay={(e) => {
+                setSonando(true)
+                oido.current.desde(e.currentTarget.currentTime)
+              }}
+              onSeeked={(e) => oido.current.desde(e.currentTarget.currentTime)}
+              onPause={(e) => {
+                setSonando(false)
+                guardarPosicion(pieza, e.currentTarget.currentTime)
+              }}
+              onTimeUpdate={(e) => {
+                // Cada ~15 s basta: escribir en cada evento es gastar batería.
+                const t = e.currentTarget.currentTime
+                if (Math.floor(t) % 15 === 0) guardarPosicion(pieza, t)
+                // La duración del audio manda; la que puso el autor, si aún no carga.
+                const r = oido.current.avanzar(t, e.currentTarget.duration || pieza.duration)
+                if (r.minutos > 0) contarActividad('minutos-escuchados', r.minutos)
+                if (r.escucha) registrarEscucha(pieza)
+              }}
+              onEnded={() => {
+                setSonando(false)
+                guardarPosicion(pieza, 0)
+                siguiente()
+              }}
+            />
+            <PanelAudio
+              audio={audio}
+              pieza={pieza}
+              sonando={sonando}
+              velocidad={velocidad}
+              salto={SALTO}
+              hayCola={cola.length > 1}
+              puedeAnterior={indice > 0}
+              puedeSiguiente={indice < cola.length - 1}
+              onAnterior={anterior}
+              onSiguiente={siguiente}
+              onSaltar={saltar}
+              onVelocidad={() => setVelocidad((v) => VELOCIDADES[(VELOCIDADES.indexOf(v) + 1) % VELOCIDADES.length])}
+              onCerrar={() => {
+                if (audio.current) guardarPosicion(pieza, audio.current.currentTime)
+                setPieza(null)
+                setCola([])
+              }}
+            />
+          </div>
         </section>
       )}
     </Contexto.Provider>

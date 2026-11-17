@@ -4,11 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Lo que los socios publican desde Estudio no pasa por este repo: se
-  # reconstruye cada 6 horas para que lo nuevo tenga su página (ver
-  # scripts/paginas.js). Mientras tanto, 404.html lo carga igual.
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '17 */3 * * *'
 
 permissions:
   contents: read

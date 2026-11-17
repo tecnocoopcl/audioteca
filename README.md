@@ -32,7 +32,7 @@ El router es mínimo y sin dependencias (`src/ruta.jsx`). Al construir,
 cuenta, serie y pieza, con su título, descripción y portada (Open Graph). Así
 GitHub Pages responde 200 en esas rutas y los enlaces se ven bien en buscadores,
 WhatsApp o Slack. Lo publicado entre un deploy y otro carga igual por
-`404.html` (copia de `index.html`), y el deploy se repite cada 6 horas.
+`404.html` (copia de `index.html`), y el deploy se repite cada 3 horas.
 
 ## Pensada para pantallas de tinta
 
@@ -62,4 +62,4 @@ El backend local tiene que aceptar el origen de Vite:
 
 Cada push a `main` construye y publica en GitHub Pages
 (`.github/workflows/deploy.yml`), con el dominio `audioteca.tecnocooperativa.cl`.
-También se publica cada 6 horas, para generar las páginas de lo nuevo.
+También se publica cada 3 horas, para generar las páginas de lo nuevo.

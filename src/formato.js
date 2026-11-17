@@ -17,6 +17,18 @@ export function duracion(segundos) {
   return h ? `${h}:${dd(m)}:${dd(s % 60)}` : `${m}:${dd(s % 60)}`
 }
 
+/** 1240 → "20 minutos 40 segundos": para el lector de pantalla. */
+export function duracionHablada(segundos) {
+  const s = Math.max(0, Math.floor(Number(segundos) || 0))
+  const h = Math.floor(s / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  const partes = []
+  if (h) partes.push(plural(h, 'hora', 'horas'))
+  if (m) partes.push(plural(m, 'minuto', 'minutos'))
+  if (s % 60 || partes.length === 0) partes.push(plural(s % 60, 'segundo', 'segundos'))
+  return partes.join(' ')
+}
+
 export function megas(bytes) {
   return bytes > 0 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : ''
 }

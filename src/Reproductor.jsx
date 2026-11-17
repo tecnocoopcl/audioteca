@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { anotarEscucha } from './api.js'
 import { fueEscuchada, marcarEscuchada, seguimiento } from './escuchas.js'
 import { contarActividad } from './espacio.js'
+import { PanelAudio } from './PanelAudio.jsx'
 import { Link } from './ruta.jsx'
 import { useMontado } from './montado.js'
 
@@ -52,6 +53,7 @@ export function ProveedorReproductor({ children }) {
   // Sube con cada escucha nueva: las vistas vuelven a mirar sus marcas.
   const [escuchas, setEscuchas] = useState(0)
   const audio = useRef(null)
+  const panel = useRef(null)
   const oido = useRef(seguimiento())
   // Las marcas de «escuchada» viven en este navegador: el HTML prerenderizado
   // no las tiene, así que aparecen después de hidratar.
@@ -138,6 +140,23 @@ export function ProveedorReproductor({ children }) {
     if (audio.current) audio.current.playbackRate = velocidad
   }, [velocidad])
 
+  // El reproductor es fijo al pie y puede tapar lo que tiene el foco (WCAG 2.4.11):
+  // el alto real se publica para que el navegador deje ese margen al desplazar.
+  const hayPieza = Boolean(pieza)
+  useEffect(() => {
+    const raiz = document.documentElement
+    const el = panel.current
+    if (!hayPieza || !el) return
+    const medir = () => raiz.style.setProperty('--alto-reproductor', `${el.offsetHeight}px`)
+    medir()
+    const obs = typeof ResizeObserver === 'function' ? new ResizeObserver(medir) : null
+    obs?.observe(el)
+    return () => {
+      obs?.disconnect()
+      raiz.style.removeProperty('--alto-reproductor')
+    }
+  }, [hayPieza])
+
   const saltar = (segundos) => {
     const el = audio.current
     if (el) el.currentTime = Math.max(0, el.currentTime + segundos)
@@ -147,7 +166,7 @@ export function ProveedorReproductor({ children }) {
     <Contexto.Provider value={{ pieza, sonando, escuchar, cola, escuchas, fueEscuchada: fueEscuchadaAqui }}>
       {children}
       {pieza && (
-        <section className="reproductor" aria-label="Reproductor">
+        <section className="reproductor" aria-label="Reproductor" ref={panel}>
           <p className="reproductor__titulo">
             <Link href={`/${pieza.account}/${pieza.serie}/${pieza.slug}`}>{pieza.title}</Link>
             <span> · {pieza.account}</span>
@@ -160,7 +179,6 @@ export function ProveedorReproductor({ children }) {
           <audio
             ref={audio}
             src={pieza.file.url}
-            controls
             preload="metadata"
             onPlay={(e) => {
               setSonando(true)
@@ -186,42 +204,25 @@ export function ProveedorReproductor({ children }) {
               siguiente()
             }}
           />
-          <div className="reproductor__botones">
-            {cola.length > 1 && (
-              <button type="button" onClick={anterior} disabled={indice <= 0} aria-label="Pieza anterior de la serie">
-                ← Anterior
-              </button>
-            )}
-            <button type="button" onClick={() => saltar(-SALTO)}>
-              −{SALTO} s
-            </button>
-            <button type="button" onClick={() => saltar(SALTO)}>
-              +{SALTO} s
-            </button>
-            <button
-              type="button"
-              onClick={() => setVelocidad((v) => VELOCIDADES[(VELOCIDADES.indexOf(v) + 1) % VELOCIDADES.length])}
-              aria-label={`Velocidad ${velocidad}×`}
-            >
-              {velocidad}×
-            </button>
-            {cola.length > 1 && (
-              <button type="button" onClick={siguiente} disabled={indice >= cola.length - 1} aria-label="Pieza siguiente de la serie">
-                Siguiente →
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                if (audio.current) guardarPosicion(pieza, audio.current.currentTime)
-                setPieza(null)
-                setCola([])
-              }}
-              aria-label="Cerrar el reproductor"
-            >
-              Cerrar
-            </button>
-          </div>
+          <PanelAudio
+            audio={audio}
+            pieza={pieza}
+            sonando={sonando}
+            velocidad={velocidad}
+            salto={SALTO}
+            hayCola={cola.length > 1}
+            puedeAnterior={indice > 0}
+            puedeSiguiente={indice < cola.length - 1}
+            onAnterior={anterior}
+            onSiguiente={siguiente}
+            onSaltar={saltar}
+            onVelocidad={() => setVelocidad((v) => VELOCIDADES[(VELOCIDADES.indexOf(v) + 1) % VELOCIDADES.length])}
+            onCerrar={() => {
+              if (audio.current) guardarPosicion(pieza, audio.current.currentTime)
+              setPieza(null)
+              setCola([])
+            }}
+          />
         </section>
       )}
     </Contexto.Provider>

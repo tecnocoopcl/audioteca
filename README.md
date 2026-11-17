@@ -27,8 +27,12 @@ Los audios se reproducen directo desde el pod de cada socio.
 - `/<cuenta>/<serie>`: una serie, con sus piezas.
 - `/<cuenta>/<serie>/<pieza>`: una pieza, para escuchar o descargar.
 
-El router es mínimo y sin dependencias (`src/ruta.jsx`). En GitHub Pages
-cualquier ruta llega a la app porque el deploy copia `index.html` a `404.html`.
+El router es mínimo y sin dependencias (`src/ruta.jsx`). Al construir,
+`scripts/paginas.js` pide las series a la API y escribe un HTML por cada
+cuenta, serie y pieza, con su título, descripción y portada (Open Graph). Así
+GitHub Pages responde 200 en esas rutas y los enlaces se ven bien en buscadores,
+WhatsApp o Slack. Lo publicado entre un deploy y otro carga igual por
+`404.html` (copia de `index.html`), y el deploy se repite cada 6 horas.
 
 ## Pensada para pantallas de tinta
 
@@ -58,3 +62,4 @@ El backend local tiene que aceptar el origen de Vite:
 
 Cada push a `main` construye y publica en GitHub Pages
 (`.github/workflows/deploy.yml`), con el dominio `audioteca.tecnocooperativa.cl`.
+También se publica cada 6 horas, para generar las páginas de lo nuevo.

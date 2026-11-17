@@ -9,8 +9,8 @@ import { useEffect, useState } from 'react'
 //   /<cuenta>/<serie>          una serie
 //   /<cuenta>/<serie>/<pieza>  una pieza
 //
-// En GitHub Pages cualquier ruta llega aquí gracias a 404.html (copia de
-// index.html).
+// En GitHub Pages cada cuenta, serie y pieza tiene su propio HTML (lo escribe
+// scripts/paginas.js al construir); lo publicado después llega por 404.html.
 export function parseRuta({ pathname, search }) {
   const partes = pathname.split('/').filter(Boolean).map(decodeURIComponent)
   const q = new URLSearchParams(search)
